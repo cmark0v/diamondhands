@@ -64,6 +64,8 @@ contract DiamondhandsTest is TestEnv {
         assertEq(uint256(DAI), uint256(diamondhands.holdToken()));
         assertEq(diamondhands.timeLock(), 30 days);
     }
-
+    function test_rawlaunch() public {
+        new Diamondhands(DAI,30 days);
+    }
     
 }
