@@ -1,0 +1,10 @@
+{
+  "name": "diamondhands",
+  "version": "1.0.0",
+  "author": "cmark0v <cmark0v@undef>",
+  "license": "MIT",
+  "dependencies": {
+    "prettier": "^2.2.1",
+    "prettier-plugin-solidity": "^1.0.0-beta.3"
+  }
+}
