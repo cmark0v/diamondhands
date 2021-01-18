@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "chain": "hardhat node",
-    "test": "hardhat test"
+    "test": "hardhat test",
+    "deploy": "hardhat run scripts/deploy.js"
   },
   "dependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.1",
