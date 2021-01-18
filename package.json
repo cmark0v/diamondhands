@@ -6,7 +6,8 @@
   "scripts": {
     "chain": "hardhat node",
     "test": "hardhat test",
-    "deploy": "hardhat run scripts/deploy.js"
+    "deploy": "hardhat run scripts/deploy.js",
+    "pretty": "prettier --write contracts/**/*.sol && prettier --write ./{test,scripts}/*.js"
   },
   "dependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.1",
