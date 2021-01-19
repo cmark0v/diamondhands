@@ -59,8 +59,13 @@ contract DiamondhandsTest is TestEnv {
     function test_withdraw_calc() public {
         owner.approve(DAI, address(diamondhands), uint256(-1));
         owner.deposit(1000 * WAD);
-        hevm.warp(block.timestamp + 15 days);
+        assertEq(owner.getWithdrawableBalance(),0);
+        uint start = block.timestamp;
+        hevm.warp(start + 15 days);
         approxEq(owner.getWithdrawableBalance(), 500 * WAD, 6);
+        hevm.warp(start + 30 days + 1);
+        assertEq(owner.getWithdrawableBalance(), 1000 * WAD);
+
     }
     function test_double_withdraw() public {
         owner.approve(DAI, address(diamondhands), uint256(-1));
