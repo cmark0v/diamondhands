@@ -33,6 +33,8 @@ contract Diamondhands {
 
     function withdraw(uint256 _amt) external isOwner {
         require(_amt <= getWithdrawableBalance(), UNAVAILERR);
+        depositDate = block.timestamp;
+        //reset deposit date, so now total bal is available timeLock seconds from now
         require(IERC20(holdToken).transferFrom(address(this), msg.sender, _amt), TXERR);
     }
 

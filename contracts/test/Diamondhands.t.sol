@@ -7,7 +7,6 @@ import "../util/TestEnv.sol";
 
 import "../Diamondhands.sol";
 
-
 contract Owner {
     Diamondhands diamondhands;
 
@@ -17,6 +16,10 @@ contract Owner {
 
     function deposit(uint256 _amt) public {
         diamondhands.deposit(_amt);
+    }
+
+    function withdraw(uint256 _amt) public {
+        diamondhands.withdraw(_amt);
     }
 
     function approve(
@@ -53,19 +56,41 @@ contract DiamondhandsTest is TestEnv {
         assertEq(IERC20(DAI).balanceOf(address(diamondhands)), 100 * WAD);
     }
 
-    function test_withdraw() public {
+    function test_withdraw_calc() public {
         owner.approve(DAI, address(diamondhands), uint256(-1));
         owner.deposit(1000 * WAD);
         hevm.warp(block.timestamp + 15 days);
         approxEq(owner.getWithdrawableBalance(), 500 * WAD, 6);
+    }
+    function test_double_withdraw() public {
+        owner.approve(DAI, address(diamondhands), uint256(-1));
+        owner.deposit(1000 * WAD);
+        uint256 bal = IERC20(DAI).balanceOf(address(owner));
+        hevm.warp(block.timestamp + 15 days);
+        owner.withdraw(owner.getWithdrawableBalance());
+        approxEq(IERC20(DAI).balanceOf(address(owner)), bal + 500 * WAD, 6);
+        assertEq(owner.getWithdrawableBalance(),0);
+    }
+
+
+    function test_withdraw() public {
+        owner.approve(DAI, address(diamondhands), uint256(-1));
+        owner.deposit(1000 * WAD);
+        uint256 bal = IERC20(DAI).balanceOf(address(owner));
+        hevm.warp(block.timestamp + 15 days);
+        owner.withdraw(owner.getWithdrawableBalance());
+        approxEq(IERC20(DAI).balanceOf(address(owner)), bal + 500 * WAD, 6);
+        hevm.warp(block.timestamp + 30 days+1);
+        owner.withdraw(owner.getWithdrawableBalance());
+        approxEq(IERC20(DAI).balanceOf(address(owner)), bal + 1000 * WAD, 18);
     }
 
     function test_sets() public {
         assertEq(uint256(DAI), uint256(diamondhands.holdToken()));
         assertEq(diamondhands.timeLock(), 30 days);
     }
+
     function test_rawlaunch() public {
-        new Diamondhands(DAI,30 days);
+        new Diamondhands(DAI, 30 days);
     }
-    
 }
