@@ -22,11 +22,14 @@ contract TestEnv is DSTest {
     bytes20 constant CHEAT_CODE = bytes20(uint160(uint256(keccak256("hevm cheat code"))));
 
     address constant DAI = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
+    address constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+
     mapping(address => uint256) balanceSlot;
 
     constructor() public {
         hevm = Hevm(address(CHEAT_CODE));
         balanceSlot[DAI] = 2; //balanceOf is second mapping in appearing in the source
+        balanceSlot[WETH] = 3;
     }
 
     function mint(

@@ -26,7 +26,7 @@ contract Diamondhands {
         _;
     }
 
-    function deposit(uint256 _amt) external isOwner {
+    function deposit(uint256 _amt) external {
         _updateDepositAge(_amt);
         require(IERC20(holdToken).transferFrom(msg.sender, address(this), _amt), TXERR);
     }
