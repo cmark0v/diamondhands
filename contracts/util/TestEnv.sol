@@ -54,7 +54,7 @@ contract TestEnv is DSTest {
         uint256 accuracy
     ) public {
         uint256 diff = val0 > val1 ? val0 - val1 : val1 - val0;
-        bool check = ((diff * RAY) / val0) < (RAY / 10**accuracy);
+        bool check = (diff * RAY)/(val0+val1) < (RAY / 10**accuracy);
 
         if (!check) {
             emit log_named_uint("Error: approx a == b not satisfied, accuracy digits ", accuracy);

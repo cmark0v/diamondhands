@@ -107,7 +107,7 @@ contract DiamondhandsTest is TestEnv {
         approxEq(IERC20(DAI).balanceOf(address(owner)), bal + 500 * WAD, 6);
         hevm.warp(block.timestamp + 30 days + 1);
         owner.withdraw(owner.getWithdrawableBalance());
-        approxEq(IERC20(DAI).balanceOf(address(owner)), bal + 1000 * WAD, 18);
+        approxEq(IERC20(DAI).balanceOf(address(owner)), bal + 1000 * WAD, 6);
     }
 
     function test_sets() public {
@@ -127,9 +127,22 @@ contract DiamondhandsTest is TestEnv {
         owner.withdrawLost(WETH);
         assertEq(IERC20(WETH).balanceOf(address(owner)), 5030 * WAD);
     }
+
     function test_auth() public {
         apu.transfer(WETH, address(diamondhands), 30 * WAD);
         assertTrue(!apu.try_withdrawLost(WETH));
         assertTrue(owner.try_withdrawLost(WETH));
+    }
+
+    function test_partial_withdrawl() public {
+        owner.approve(DAI, address(diamondhands), uint256(-1));
+        owner.deposit(1000 * WAD);
+        uint256 bal = IERC20(DAI).balanceOf(address(owner));
+        hevm.warp(block.timestamp + 15 days);
+        uint256 avail = owner.getWithdrawableBalance();
+        uint256 nwd = avail/5;
+        owner.withdraw(nwd);
+        approxEq(IERC20(DAI).balanceOf(address(owner)), bal + nwd, 6);
+        approxEq(owner.getWithdrawableBalance(), avail - nwd, 6);
     }
 }

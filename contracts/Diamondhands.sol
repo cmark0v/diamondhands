@@ -33,19 +33,28 @@ contract Diamondhands {
 
     function withdraw(uint256 _amt) external isOwner {
         require(_amt <= getWithdrawableBalance(), UNAVAILERR);
-        depositDate = block.timestamp;
-        //reset deposit date, so now total bal is available timeLock seconds from now
+        _updateWithdrawAge(_amt);
         require(IERC20(holdToken).transferFrom(address(this), msg.sender, _amt), TXERR);
     }
 
     function getWithdrawableBalance() public view returns (uint256) {
         uint256 bal = IERC20(holdToken).balanceOf(address(this));
         uint256 time = (block.timestamp - depositDate) * WAD;
-        uint256 out = ((time / (timeLock + 1)) * bal) / WAD;
+        uint256 out = ((time / (timeLock )) * bal) / WAD;
         if (out > bal) {
             out = bal;
         }
         return out;
+    }
+
+    function _updateWithdrawAge(uint256 _amt) internal {
+        uint256 bal = IERC20(holdToken).balanceOf(address(this));
+        if (bal == _amt) {
+            depositDate = block.timestamp;
+        }else{
+            uint256 coef = (WAD * _amt) / (bal - _amt);
+            depositDate = (depositDate * WAD + (block.timestamp - depositDate) * coef) / WAD;
+        }
     }
 
     function _updateDepositAge(uint256 _amt) internal {
@@ -58,9 +67,11 @@ contract Diamondhands {
             depositDate = (date * WAD + (block.timestamp - date) * coef) / WAD;
         }
     }
+
     function setOwner(address _owner) external isOwner {
         owner = _owner;
     }
+
     //drain random tokens if they end up here
     function withdrawLost(address _token) external isOwner {
         require(_token != holdToken, UNAVAILERR);
