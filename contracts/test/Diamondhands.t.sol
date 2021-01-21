@@ -140,9 +140,22 @@ contract DiamondhandsTest is TestEnv {
         uint256 bal = IERC20(DAI).balanceOf(address(owner));
         hevm.warp(block.timestamp + 15 days);
         uint256 avail = owner.getWithdrawableBalance();
-        uint256 nwd = avail/5;
+        uint256 nwd = avail/10;
         owner.withdraw(nwd);
         approxEq(IERC20(DAI).balanceOf(address(owner)), bal + nwd, 6);
         approxEq(owner.getWithdrawableBalance(), avail - nwd, 6);
     }
+    function test_partial_withdrawl2() public {
+        assertEq(owner.getWithdrawableBalance(),0);
+        owner.approve(DAI, address(diamondhands), uint256(-1));
+        owner.deposit(1000 * WAD);
+        uint256 bal = IERC20(DAI).balanceOf(address(owner));
+        hevm.warp(block.timestamp + 5 days);
+        uint256 avail = owner.getWithdrawableBalance();
+        uint256 nwd = avail/3;
+        owner.withdraw(nwd);
+        approxEq(IERC20(DAI).balanceOf(address(owner)), bal + nwd, 6);
+        approxEq(owner.getWithdrawableBalance(), avail - nwd, 4);
+    }
+
 }
