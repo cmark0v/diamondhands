@@ -7,14 +7,14 @@ async function main() {
   await token.deployed();
 
   console.log("token mock deployed to:", token.address);
-  publish(token, "MockToken");
+  publish(token, "MockToken", 'mocks');
 
   const Diamondhands = await hre.ethers.getContractFactory("Diamondhands");
   const diamondhands = await Diamondhands.deploy(token.address, 3600);
   await diamondhands.deployed();
 
   console.log("Diamondhands deployed to:", diamondhands.address);
-  publish(diamondhands, "Diamondhands");
+  publish(diamondhands, "Diamondhands",'');
 }
 
 main()
@@ -24,9 +24,12 @@ main()
     process.exit(1);
   });
 
-function publish(contractOb, contractName) {
-  const abi = JSON.stringify(contractOb.interface, null, 2);
+function publish(contractOb, contractName,path) {
   const address = JSON.stringify(contractOb.address, null, 2);
+
+  const contractArtifactFile = `../artifacts/contracts/${path}/${contractName}.sol/${contractName}.json`;
+  const contractArtifacts = require(contractArtifactFile);
+  const abi = JSON.stringify(contractArtifacts.abi, null, 2);
 
   const folder = "artifacts/published/";
   if (!fs.existsSync(folder)) {
