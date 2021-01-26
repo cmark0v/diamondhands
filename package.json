@@ -5,12 +5,12 @@
   "license": "MIT",
   "scripts": {
     "chain": "hardhat node",
-    "jstest": "hardhat test",
+    "jstest": "yarn deploy&&hardhat test",
     "deploy": "hardhat run scripts/deploy.js",
     "pretty": "prettier --write contracts/**/*.sol && prettier --write ./{test,scripts}/*.js",
     "setup": "git submodule init&&git submodule update&&mv lib/ds-test/src lib/ds-test/contracts",
     "hevmtest": "./test.sh",
-    "test": "yarn deploy&&yarn jstest&&yarn hevmtest"
+    "test": "yarn jstest&&yarn hevmtest"
   },
   "dependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.1",
