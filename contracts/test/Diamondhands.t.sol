@@ -86,6 +86,8 @@ contract DiamondhandsTest is TestEnv {
         approxEq(owner.getWithdrawableBalance(), 500 * WAD, 6);
         hevm.warp(start + 30 days + 1);
         assertEq(owner.getWithdrawableBalance(), 1000 * WAD);
+        hevm.warp(start + 5000 weeks);
+        assertEq(owner.getWithdrawableBalance(), 1000 * WAD);
     }
 
     function test_double_withdraw() public {

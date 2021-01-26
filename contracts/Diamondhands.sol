@@ -49,16 +49,11 @@ contract Diamondhands {
 
     function _updateWithdrawAge(uint256 _amt) internal {
         uint256 bal = IERC20(holdToken).balanceOf(address(this));
-        uint256 avail = getWithdrawableBalance();
-        uint256 _date = depositDate;
         if (_amt == bal) {
             depositDate = block.timestamp;
         }else{
             uint256 corr = _amt*WAD*(timeLock - (block.timestamp - depositDate))/(bal - _amt);
             depositDate = (depositDate*WAD  + corr)/WAD;
-        }
-        if (avail ==bal) { 
-           depositDate = _date; 
         }
     }
 
