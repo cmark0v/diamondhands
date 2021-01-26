@@ -1,27 +1,27 @@
-const fs = require("fs");
-const hre = require("hardhat");
+const fs = require('fs');
+const hre = require('hardhat');
 
 async function main() {
-  const Dai = await hre.ethers.getContractFactory("MockToken");
-  const dai = await Dai.deploy("DAI token", "DAI");
+  const Dai = await hre.ethers.getContractFactory('MockToken');
+  const dai = await Dai.deploy('DAI token', 'DAI');
   await dai.deployed();
 
-  console.log("DAI token mock deployed to:", dai.address);
-  publish(dai, "MockToken", "mocks", "DAI");
+  console.log('DAI token mock deployed to:', dai.address);
+  publish(dai, 'MockToken', 'mocks', 'DAI');
 
-  const Mck = await hre.ethers.getContractFactory("MockToken");
-  const mck = await Mck.deploy("MCK token", "MCK");
+  const Mck = await hre.ethers.getContractFactory('MockToken');
+  const mck = await Mck.deploy('MCK token', 'MCK');
   await mck.deployed();
 
-  console.log("MCK token mock deployed to:", mck.address);
-  publish(mck, "MockToken", "mocks", "MCK");
+  console.log('MCK token mock deployed to:', mck.address);
+  publish(mck, 'MockToken', 'mocks', 'MCK');
 
-  const Diamondhands = await hre.ethers.getContractFactory("Diamondhands");
+  const Diamondhands = await hre.ethers.getContractFactory('Diamondhands');
   const diamondhands = await Diamondhands.deploy(dai.address, 3600);
   await diamondhands.deployed();
 
-  console.log("Diamondhands deployed to:", diamondhands.address);
-  publish(diamondhands, "Diamondhands");
+  console.log('Diamondhands deployed to:', diamondhands.address);
+  publish(diamondhands, 'Diamondhands');
 }
 
 main()
@@ -33,17 +33,17 @@ main()
 
 function publish(contractOb, contractName, path, publishName) {
   const address = JSON.stringify(contractOb.address, null, 2);
-  if (publishName == undefined || publishName == "") {
+  if (publishName == undefined || publishName == '') {
     publishName = contractName;
   }
   if (path == undefined) {
-    path = "";
+    path = '';
   }
   const contractArtifactFile = `../artifacts/contracts/${path}/${contractName}.sol/${contractName}.json`;
   const contractArtifacts = require(contractArtifactFile);
   const abi = JSON.stringify(contractArtifacts.abi, null, 2);
 
-  const folder = "artifacts/published/";
+  const folder = 'artifacts/published/';
   if (!fs.existsSync(folder)) {
     fs.mkdir(folder, console.log);
   }
