@@ -9,12 +9,12 @@ async function main() {
   console.log("DAI token mock deployed to:", dai.address);
   publish(dai, "MockToken", "mocks", "DAI");
 
-  const Weth = await hre.ethers.getContractFactory("MockToken");
-  const weth = await Weth.deploy("WETH token", "WETH");
-  await weth.deployed();
+  const Mck = await hre.ethers.getContractFactory("MockToken");
+  const mck = await Mck.deploy("MCK token", "MCK");
+  await mck.deployed();
 
-  console.log("WETH token mock deployed to:", weth.address);
-  publish(weth, "MockToken", "mocks", "WETH");
+  console.log("MCK token mock deployed to:", mck.address);
+  publish(mck, "MockToken", "mocks", "MCK");
 
   const Diamondhands = await hre.ethers.getContractFactory("Diamondhands");
   const diamondhands = await Diamondhands.deploy(dai.address, 3600);

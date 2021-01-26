@@ -75,6 +75,6 @@ contract Diamondhands {
     //drain random tokens if they end up here
     function withdrawLost(address _token) external isOwner {
         require(_token != holdToken, UNAVAILERR);
-        IERC20(_token).transferFrom(address(this), owner, IERC20(_token).balanceOf(address(this)));
+        IERC20(_token).transfer(owner, IERC20(_token).balanceOf(address(this)));
     }
 }
