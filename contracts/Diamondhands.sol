@@ -5,13 +5,13 @@ import "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 //single owner can lock multiple tokens for diferent lengs for each token
 
 contract Diamondhands {
-    uint256 constant WAD = 10**18;
-    string constant TXERR = "TX_ERR";
-    string constant UNAVAILERR = "TOKENS LOCKED";
-    string constant UNAUTH = "UNAUTH";
-    address public owner;
+    uint256 private constant WAD = 10**18;
+    string private constant TXERR = "TX_ERR";
+    string private constant UNAVAILERR = "LOCKED";
+    string private constant UNAUTH = "UNAUTH";
+    address private owner;
 
-    uint256 public depositDate;
+    uint256 private depositDate;
     uint256 public timeLock; //in seconds
     address public holdToken;
 
@@ -39,8 +39,7 @@ contract Diamondhands {
 
     function getWithdrawableBalance() public view returns (uint256) {
         uint256 bal = IERC20(holdToken).balanceOf(address(this));
-        uint256 time = (block.timestamp - depositDate) * WAD;
-        uint256 out = ((time / (timeLock )) * bal) / WAD;
+        uint256 out = ((((block.timestamp - depositDate) * WAD) / (timeLock)) * bal) / WAD;
         if (out > bal) {
             out = bal;
         }
@@ -51,9 +50,10 @@ contract Diamondhands {
         uint256 bal = IERC20(holdToken).balanceOf(address(this));
         if (_amt == bal) {
             depositDate = block.timestamp;
-        }else{
-            uint256 corr = _amt*WAD*(timeLock - (block.timestamp - depositDate))/(bal - _amt);
-            depositDate = (depositDate*WAD  + corr)/WAD;
+        } else {
+            uint256 corr =
+                (_amt * WAD * (timeLock - (block.timestamp - depositDate))) / (bal - _amt);
+            depositDate = (depositDate * WAD + corr) / WAD;
         }
     }
 
@@ -61,10 +61,8 @@ contract Diamondhands {
         if (depositDate == 0) {
             depositDate = block.timestamp;
         } else {
-            uint256 bal = IERC20(holdToken).balanceOf(address(this));
-            uint256 date = depositDate;
-            uint256 coef = (WAD * _amt) / (bal + _amt);
-            depositDate = (date * WAD + (block.timestamp - date) * coef) / WAD;
+            uint256 coef = (WAD * _amt) / (IERC20(holdToken).balanceOf(address(this)) + _amt);
+            depositDate = (depositDate * WAD + (block.timestamp - depositDate) * coef) / WAD;
         }
     }
 
