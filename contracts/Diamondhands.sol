@@ -27,13 +27,13 @@ contract Diamondhands {
     }
 
     function deposit(uint256 _amt) external {
-        _updateDepositAge(_amt);
+        _updateAge(_amt, true);
         require(IERC20(holdToken).transferFrom(msg.sender, address(this), _amt), TXERR);
     }
 
     function withdraw(uint256 _amt) external isOwner {
         require(_amt <= getWithdrawableBalance(), UNAVAILERR);
-        _updateWithdrawAge(_amt);
+        _updateAge(_amt, false);
         require(IERC20(holdToken).transferFrom(address(this), msg.sender, _amt), TXERR);
     }
 
@@ -46,23 +46,18 @@ contract Diamondhands {
         return out;
     }
 
-    function _updateWithdrawAge(uint256 _amt) internal {
+    function _updateAge(uint256 _amt, bool isDeposit) internal {
         uint256 bal = IERC20(holdToken).balanceOf(address(this));
-        if (_amt == bal) {
-            depositDate = block.timestamp;
-        } else {
-            uint256 corr =
-                (_amt * WAD * (timeLock - (block.timestamp - depositDate))) / (bal - _amt);
-            depositDate = (depositDate * WAD + corr) / WAD;
+        uint256 corr = 0;
+        if (isDeposit) {
+            corr = bal + _amt == 0 ? 0 : (WAD * _amt) / (bal + _amt);
+        } else if (bal != _amt) {
+            corr = (_amt * WAD * (timeLock - (block.timestamp - depositDate))) / (bal - _amt);
         }
-    }
-
-    function _updateDepositAge(uint256 _amt) internal {
         if (depositDate == 0) {
             depositDate = block.timestamp;
         } else {
-            uint256 coef = (WAD * _amt) / (IERC20(holdToken).balanceOf(address(this)) + _amt);
-            depositDate = (depositDate * WAD + (block.timestamp - depositDate) * coef) / WAD;
+            depositDate = (depositDate * WAD + corr) / WAD;
         }
     }
 
