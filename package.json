@@ -8,7 +8,7 @@
     "jstest": "yarn deploy&&hardhat test",
     "deploy": "hardhat run scripts/deploy.js",
     "pretty": "prettier --write contracts/**/*.sol && prettier --write ./{test,scripts}/*.js",
-    "setup": "git submodule init&&git submodule update&&mv lib/ds-test/src lib/ds-test/contracts",
+    "setup": "git submodule init&&git submodule update&&mv lib/ds-test/src lib/ds-test/contracts&&yarn",
     "hevmtest": "./test.sh",
     "test": "yarn jstest&&yarn hevmtest"
   },
